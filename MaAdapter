@@ -1,0 +1,74 @@
+package com.spring_ballet.notepad;
+
+import android.content.Context;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import java.util.List;
+
+public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
+
+    private List<Note> noteList;
+    private Context context;
+    private AdapterListener listener;
+
+    public MyAdapter(List<Note> noteList) {
+        this.noteList = noteList;
+    }
+
+    public void setOnAdapterListener(AdapterListener listener) {
+        this.listener = listener;
+    }
+
+    public interface AdapterListener {
+        void onClick(View view, int position);
+    }
+
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, final int viewType) {
+        if (context == null) {
+            context = parent.getContext();
+        }
+        View view = LayoutInflater.from(context).inflate(R.layout.note_item, parent, false);
+        final ViewHolder holder = new ViewHolder(view);
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.onClick(view, holder.getLayoutPosition());
+            }
+        });
+        return holder;
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        Note note = noteList.get(position);
+        holder.tv_time.setText(note.getTime());
+        holder.tv_level.setText(note.getLevel());
+        holder.tv_content.setText(note.getContent());
+    }
+
+    @Override
+    public int getItemCount() {
+        return noteList.size();
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        TextView tv_time;
+        TextView tv_level;
+        TextView tv_content;
+        CardView cardView;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+            cardView = (CardView) itemView;
+            tv_time = itemView.findViewById(R.id.tv_time);
+            tv_level = itemView.findViewById(R.id.tv_level);
+            tv_content = itemView.findViewById(R.id.tv_content);
+        }
+    }
+}
